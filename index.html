@@ -152,6 +152,155 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-2019-10-22课堂笔记" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/10/22/2019-10-22课堂笔记/">2019.10.22课堂笔记</a>
+    </h1>
+  
+
+        
+        <a href="/2019/10/22/2019-10-22课堂笔记/" class="archive-article-date">
+  	<time datetime="2019-10-22T12:10:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>JSP</p>
+<p>实现登录功能</p>
+<p>第一步: 创建login.jsp登录页面<br>在所创建的动态项目his_v1中，于WebContent文件夹下创建login.jsp。其显示效果类似于下图:<br>对应源代码如下：</p>
+<pre><code>&lt;html&gt; &lt;body&gt; &lt;!-- 需要注意的是:xml配置文件中的url-pattern这里写的是/LoginServlet，而在jsp中form表单
+的action写的是LoginServlet,而不是/LoginServlet。 --&gt; &lt;form action=&quot;LoginServlet&quot; method=&quot;post&quot;&gt; &lt;table&gt;
+&lt;tr&gt;
+&lt;td colspan=&quot;2&quot;&gt;登录窗口&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;用户名：&lt;/td&gt;
+&lt;td&gt;&lt;input type=&quot;text&quot; name=&quot;username&quot; /&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;密码：&lt;/td&gt;
+&lt;td&gt;&lt;input type=&quot;password&quot; name=&quot;password&quot; /&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td colspan=&quot;2&quot;&gt;&lt;input type=&quot;submit&quot; value=&quot;登录&quot; /&gt; &lt;a href=&quot;register.jsp&quot;&gt;注册&lt;/a&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/form&gt;
+&lt;/body&gt; &lt;/html&gt;</code></pre><p>第二步：创建处理登录判定的Servlet:LoginServlet<br>在第一步中的login.jsp中，我们需要特别注意这句代码：</p>
+<form action="LoginServlet" method="post">
+这行代码中有两个属性，说明如下：
+action属性：点击登录按钮后，接下来的动作，这里是转到了LoginServlet。
+method属性：表单中数据的提交方式。
+接下来，再src文件夹下创建LoginServlet类，其中的doPost()方法参考代码如下：
+
+<pre><code>/**
+* @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+response)
+*/
+protected void doPost(HttpServletRequest request, HttpServletResponse
+response) throws ServletException, IOException {
+// TODO Auto-generated method stub
+request.setCharacterEncoding(&quot;utf-8&quot;);//设置request编码
+response.setContentType(&quot;text/html;charset=utf-8&quot;);//设置response
+编码
+String id = request.getParameter(&quot;username&quot;);//获取表单用户名
+String pwd = request.getParameter(&quot;password&quot;);//获取表单密码
+if(pwd==null || pwd.equals(&quot;&quot;)){//若没有密码，或为空
+response.getWriter().print(&quot;密码不能为空！&quot;);//在当前页面
+(login.jsp)添加显示一句话。
+return;//跳出doPost()方法，等待login.jsp页面再次提交表单。
+}
+if(id==null || id.equals(&quot;&quot;)){//若没有账号，或为空
+response.getWriter().print(&quot;用户名不能为空！&quot;);//在当前页面
+(login.jsp)添加显示一句话。
+return;//跳出doPost()方法，等待login.jsp页面再次提交表单。
+}
+if(id.equals(&quot;sam&quot;) &amp;&amp; pwd.equals(&quot;123&quot;)) {//用户名、密码正确
+request.getRequestDispatcher(&quot;welcome.jsp&quot;).forward(request, response);//页面转发
+//页面跳转的方式：(1)转发：foward(地址栏地址不变);(2)重定向：
+redirect(地址栏地址变化) }else//用户名、密码错误
+{
+response.getWriter().print(&quot;用户名或密码有误，请重新输
+入！&quot;);//在当前页面(login.jsp)添加显示一句话。
+return;//跳出doPost()方法，等待login.jsp页面再次提交表单。
+} } }</code></pre><p>第三步：LoginServlet在项目配置文件web.xml中注册：</p>
+<pre><code>&lt;servlet&gt;&lt;/servlet&gt;
+&lt;servlet-name&gt;&lt;/servlet-name&gt;
+&lt;servlet-class&gt;&lt;/servlet-class&gt;
+&lt;servlet-mapping&gt;&lt;/servlet-mapping&gt;
+&lt;url-pattern&gt;&lt;/url-pattern&gt;
+这五个都是注册一个servlet组件必须的节点</code></pre><ol>
+<li><p>servlet 是用来注册Servlet的存放地址 servlet-name 这个是我们要注册servlet的名字 servlet-class 这个就<br>是指向我们要注册的servlet 的类地址, 要带包路径。<br>课堂笔记1022.md 10/22/2019<br>3 / 6 2. servlet-mapping 是用来配置我们注册的组件的访问路径</p>
+</li>
+<li><p>servlet-name 要与前面写的servlet的名字一致</p>
+</li>
+<li><p>url-pattern 配置这个组件的访问路径</p>
+</li>
+<li><p>实例</p>
+<pre><code>接续第一步、第二步内容为例：
+&lt;servlet&gt;
+&lt;servlet-name&gt;LoginServlet&lt;/servlet-name&gt;
+&lt;servlet-class&gt;sam.his.servlet.LoginServlet&lt;/servlet-class&gt; &lt;!--存放路径 --&gt; 
+&lt;/servlet&gt;
+&lt;servlet-mapping&gt;
+&lt;servlet-name&gt;LoginServlet&lt;/servlet-name&gt; &lt;!-- 与上面的
+&lt;servlet-name&gt; 要一致 --&gt;
+&lt;url-pattern&gt;/LoginServlet&lt;/url-pattern&gt; &lt;!-- 访问路径 --&gt;
+&lt;/servlet-mapping&gt;</code></pre></li>
+</ol>
+<p>第四步：实施登录<br>注意：需要再添加一个登录成功页面welcome.jsp(参考第二步的doPost方法中代码)<br>项目部署在tomcat服务器上，运行后在地址栏输入地址访问项目的login.jsp页面，表单中录入用户名、密码，<br>尝试登录。</p>
+</form>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/10/22/2019-10-22课堂笔记/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
